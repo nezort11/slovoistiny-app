@@ -7,6 +7,7 @@ import {
   TextInput,
   Text,
   Pressable,
+  ScrollView,
 } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
@@ -17,6 +18,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useIsAwaiting } from "@/hooks/useIsAwaiting";
 import { Link, useNavigation, useRouter } from "expo-router";
+import { Container } from "@/components/Container";
 
 type Artist = {
   id: number;
@@ -100,92 +102,94 @@ export default function HomeScreen() {
   };
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title" style={{ fontSize: 28 }}>
-          Слово Истины Песни
-        </ThemedText>
-        {/* <HelloWave /> */}
-      </ThemedView>
-      <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
-        <TextInput
-          placeholder="Введите запрос для поиска"
-          onChangeText={setSongSearchQuery}
-          readOnly={isSearching}
-          style={{ borderWidth: 1, minWidth: 200 }}
-        />
-        <Button
-          title="Поиск"
-          onPress={handleSearch}
-          disabled={!songSearchQuery || isSearching}
-        />
-      </View>
-      <View>
-        {isSearching && <Text>Загрузка...</Text>}
-        <View style={{ gap: 8 }}>
-          {searchResults &&
-            searchResults.musics.data
-              .filter(
-                (searchResultMusic) =>
-                  searchResultMusic.id_lang === MusicLanguage.Russian
-              )
-              .map((searchResultMusic) => (
-                <Pressable
-                  key={searchResultMusic.id}
-                  onPress={() =>
-                    router.push({
-                      pathname: "/song-modal",
-                      params: {
-                        searchResultMusic:
-                          JSON.stringify(searchResultMusic),
-                      },
-                    })
-                  }
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 16,
-                  }}
-                >
-                  <Image
-                    width={40}
-                    height={40}
-                    source={{
-                      uri: searchResultMusic.artist.img_url
-                        ? getHolychordsImageThumbnail(
-                            searchResultMusic.artist.img_url
-                          )
-                        : "https://holychords.pro/assets/img/no-cover.jpeg",
-                    }}
-                    style={{ borderRadius: 8, width: 40, height: 40 }}
-                  />
-                  <View
-                    style={
-                      {
-                        // display: "flex",
-                        // flexDirection: "column",
-                        // flexWrap: "wrap",
-                        // flex: 1,
-                      }
-                    }
-                  >
-                    <Text>{searchResultMusic.name}</Text>
-                    <Text>{searchResultMusic.artist.isp_name}</Text>
-                  </View>
-                </Pressable>
-              ))}
+    <>
+      <Image
+        source={require("@/assets/images/slovoistiny-logo.jpg")}
+        style={styles.slovoistinyLogo}
+      />
+
+      <Container
+      // headerBackgroundColor={{ light: "#101010", dark: "#101010" }}
+      // headerImage={}
+      >
+        <ThemedView style={styles.titleContainer}>
+          <ThemedText type="title" style={{ fontSize: 28 }}>
+            Слово Истины Песни
+          </ThemedText>
+          {/* <HelloWave /> */}
+        </ThemedView>
+        <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+          <TextInput
+            placeholder="Введите запрос для поиска"
+            onChangeText={setSongSearchQuery}
+            readOnly={isSearching}
+            style={{ borderWidth: 1, minWidth: 200 }}
+          />
+          <Button
+            title="Поиск"
+            onPress={handleSearch}
+            disabled={!songSearchQuery || isSearching}
+            color="#DFCE5A"
+          />
         </View>
-      </View>
-      {/* <ThemedView style={styles.stepContainer}>
+        <View>
+          {isSearching && <Text>Загрузка...</Text>}
+          <View style={{ gap: 8 }}>
+            {searchResults &&
+              searchResults.musics.data
+                .filter(
+                  (searchResultMusic) =>
+                    searchResultMusic.id_lang === MusicLanguage.Russian
+                )
+                .map((searchResultMusic) => (
+                  <Pressable
+                    key={searchResultMusic.id}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/song-modal",
+                        params: {
+                          searchResultMusic:
+                            JSON.stringify(searchResultMusic),
+                        },
+                      })
+                    }
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 16,
+                    }}
+                  >
+                    <Image
+                      width={40}
+                      height={40}
+                      source={{
+                        uri: searchResultMusic.artist.img_url
+                          ? getHolychordsImageThumbnail(
+                              searchResultMusic.artist.img_url
+                            )
+                          : "https://holychords.pro/assets/img/no-cover.jpeg",
+                      }}
+                      style={{ borderRadius: 8, width: 40, height: 40 }}
+                    />
+                    <View
+                      style={
+                        {
+                          // display: "flex",
+                          // flexDirection: "column",
+                          // flexWrap: "wrap",
+                          // flex: 1,
+                        }
+                      }
+                    >
+                      <Text>{searchResultMusic.name}</Text>
+                      <Text>{searchResultMusic.artist.isp_name}</Text>
+                    </View>
+                  </Pressable>
+                ))}
+          </View>
+        </View>
+        {/* <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
           Edit{" "}
@@ -220,7 +224,8 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
       </ThemedView> */}
-    </ParallaxScrollView>
+      </Container>
+    </>
   );
 }
 
@@ -240,5 +245,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: "absolute",
+  },
+  slovoistinyLogo: {
+    width: "100%",
+    height: 320,
+    // bottom: 0,
+    // left: 0,
+    // position: "absolute",
   },
 });
