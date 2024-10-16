@@ -132,7 +132,7 @@ export default function HomeScreen() {
             color="#DFCE5A"
           />
         </View>
-        <View>
+        <ScrollView>
           {isSearching && <Text>Загрузка...</Text>}
           <View style={{ gap: 8 }}>
             {searchResults &&
@@ -188,7 +188,7 @@ export default function HomeScreen() {
                   </Pressable>
                 ))}
           </View>
-        </View>
+        </ScrollView>
         {/* <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
