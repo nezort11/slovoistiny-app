@@ -8,6 +8,7 @@ import {
   Text,
   Pressable,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
@@ -102,7 +103,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <>
+    <SafeAreaView>
       <Image
         source={require("@/assets/images/slovoistiny-logo.jpg")}
         style={styles.slovoistinyLogo}
@@ -225,7 +226,7 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView> */}
       </Container>
-    </>
+    </SafeAreaView>
   );
 }
 
