@@ -62,7 +62,9 @@ const HTTP_PROXY_URL = process.env.EXPO_PUBLIC_HTTP_PROXY_URL;
 const HOLYCHORDS_API_URL_CORS = "https://holychords.pro/search";
 
 const proxifyUrl = (url: string) => {
-  return new URL(url, HTTP_PROXY_URL).href;
+  const proxiedUrl = new URL(HTTP_PROXY_URL);
+  proxiedUrl.pathname = url;
+  return proxiedUrl.href;
 };
 
 // Proxy holychords requests in browser to bypass CORS
