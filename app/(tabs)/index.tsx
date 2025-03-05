@@ -57,17 +57,19 @@ type SearchResults = {
   artists: Artist[];
 };
 
-const HOLYCHORDS_API_URL_ = "https://holychords.pro/search";
+const HTTP_PROXY_URL = process.env.EXPO_PUBLIC_HTTP_PROXY_URL;
+
+const HOLYCHORDS_API_URL_CORS = "https://holychords.pro/search";
 
 const proxifyUrl = (url: string) => {
-  return `https://ehp.deno.dev/${url}`;
+  return new URL(url, HTTP_PROXY_URL).href;
 };
 
 // Proxy holychords requests in browser to bypass CORS
 const HOLYCHORDS_API_URL =
   Platform.OS === "web"
-    ? proxifyUrl(HOLYCHORDS_API_URL_)
-    : HOLYCHORDS_API_URL_;
+    ? proxifyUrl(HOLYCHORDS_API_URL_CORS)
+    : HOLYCHORDS_API_URL_CORS;
 
 const searchSongs = async (query: string) => {
   const searchResults = await axios.get<SearchResults>(

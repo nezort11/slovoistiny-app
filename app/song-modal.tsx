@@ -26,8 +26,6 @@ export default function SongModal() {
     navigation.setOptions({ title: searchResultMusic.name });
   }, []);
 
-  const fontFamily = Platform.OS === "ios" ? "Courier New" : "monospace";
-
   return (
     <ScrollView contentContainerStyle={[{ padding: 16 }]}>
       {/* <View style={styles.container}> */}
@@ -45,7 +43,9 @@ export default function SongModal() {
           fontSize: 18,
           fontWeight: 500,
           fontVariant: ["tabular-nums"],
-          fontFamily,
+          // Song lyrics are displayed correctly only in non-monospace font family
+          // fontFamily: "sans-serif",
+          // fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace",
         }}
       >
         {searchResultMusic.text}
