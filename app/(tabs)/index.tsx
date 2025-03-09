@@ -20,6 +20,7 @@ import axios from "axios";
 import { useIsAwaiting } from "@/hooks/useIsAwaiting";
 import { Link, useNavigation, useRouter } from "expo-router";
 import { Container } from "@/components/Container";
+import "../../utils/eruda";
 
 type Artist = {
   id: number;
