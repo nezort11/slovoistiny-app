@@ -10,7 +10,7 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { Music } from "@/api/songs";
 import { useLayoutEffect, useMemo } from "react";
 import { Feather } from '@expo/vector-icons';
-import { buildTelegramShareLink } from "@/utils/telegram";
+import { buildTelegramShareLink, buildSongLink } from "@/utils/telegram";
 
 type SongModalParams = {
   searchResultMusic: string;
@@ -26,7 +26,7 @@ export default function SongModal() {
   console.log("route params", searchResultMusic);
 
   const handleShareSong = () => {
-    const songUrl = `https://t.me/slovoistiny_bot/app?startapp=song/${searchResultMusic.id}`;
+    const songUrl = buildSongLink(searchResultMusic.id);
     const shareText = `${searchResultMusic.name} - ${searchResultMusic.artist.isp_name}`;
     const shareUrl = buildTelegramShareLink(songUrl, shareText);
     

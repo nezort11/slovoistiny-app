@@ -24,6 +24,7 @@ import axios from "axios";
 import { useRouter } from "expo-router";
 import { Alert } from "react-native";
 import { searchSongs, Music, getSongEntry } from "@/api/songs";
+import { START_APP_PARAM_DELIMITER } from "@/utils/telegram";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 
@@ -153,7 +154,7 @@ export default function RootLayout() {
     if (startParam) {
       (async () => {
         if (startParam?.startsWith("song")) {
-          const songId = parseInt(startParam.split("/")[1]);
+          const songId = parseInt(startParam.split(START_APP_PARAM_DELIMITER)[1]);
           // Get song page by id
           const songEntry = await getSongEntry(songId);
           console.log("songEntry", songEntry);
