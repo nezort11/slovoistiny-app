@@ -1,4 +1,5 @@
 // "/" and ":" are not allowed in telegram startapp params
+// https://docs.telegram-mini-apps.com/platform/start-parameter#restrictions
 export const START_APP_PARAM_DELIMITER = '_';
 
 // https://core.telegram.org/bots/webapps#direct-link-mini-apps

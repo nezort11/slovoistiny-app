@@ -154,13 +154,14 @@ export default function RootLayout() {
   const handleStartParam = async () => {
     const launchParams = retrieveLaunchParams();
     const startParam = launchParams?.tgWebAppStartParam;
+    console.log("startParam", startParam);
     if (!startParam) {
       return;
     }
 
     if (startParam.startsWith("song")) {
       const songId = parseInt(startParam.split(START_APP_PARAM_DELIMITER)[1]);
-      // Get song page by id
+      console.log("songId", songId);
       const songEntry = await getSongEntry(songId);
       console.log("songEntry", songEntry);
 
