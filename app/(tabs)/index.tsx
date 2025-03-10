@@ -21,6 +21,7 @@ import { useIsAwaiting } from "@/hooks/useIsAwaiting";
 import { Link, useNavigation, useRouter } from "expo-router";
 import { Container } from "@/components/Container";
 import { searchSongs, Music, SearchResults, MusicLanguage, getHolychordsImageThumbnail } from "@/api/songs";
+import { COLORS } from "@/constants/theme";
 
 
 
@@ -33,7 +34,7 @@ export default function HomeScreen() {
   const [searchResults, setSearchResults] = useState<
     SearchResults | undefined
   >();
-  
+
   const { wait: awaitSearchSongs, isAwaiting: isSearching } =
     useIsAwaiting(searchSongs);
 
@@ -72,7 +73,7 @@ export default function HomeScreen() {
             title="Поиск"
             onPress={handleSearch}
             disabled={!songSearchQuery || isSearching}
-            color="#DFCE5A"
+            color={COLORS.primary}
           />
         </View>
         <ScrollView>
@@ -109,8 +110,8 @@ export default function HomeScreen() {
                       source={{
                         uri: searchResultMusic.artist.img_url
                           ? getHolychordsImageThumbnail(
-                              searchResultMusic.artist.img_url
-                            )
+                            searchResultMusic.artist.img_url
+                          )
                           : "https://holychords.pro/assets/img/no-cover.jpeg",
                       }}
                       style={{ borderRadius: 8, width: 40, height: 40 }}

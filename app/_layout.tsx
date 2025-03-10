@@ -6,7 +6,7 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import "react-native-reanimated";
 import {
   isTMA,
@@ -25,9 +25,18 @@ import { searchSongs, Music, getSongEntry } from "@/api/songs";
 import { START_APP_PARAM_DELIMITER } from "@/utils/telegram";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { LoadingOverlay } from "@/components/LoadingOverlay";
+import { useAwaiting } from "@/hooks/useAwaiting";
 
 const initialize = async () => {
-  // mockTelegramEnv({
+  mockTelegramEnv({
+    launchParams: {
+      tgWebAppPlatform: 'ios',
+      tgWebAppThemeParams: {},
+      tgWebAppVersion: '7.2',
+      // tgWebAppStartParam: 'song_68764'
+    }
+  });
   //   // launchParams: {
   //   //   tgWebAppThemeParams: {
 
@@ -141,9 +150,6 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
-  // const launchParams = useLau();
-  // const startParam = useSignal(initDataStartParam);
-  // console.log("startParam", startParam);
 
   useEffect(() => {
     if (loaded) {
@@ -151,7 +157,7 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  const handleStartParam = async () => {
+  const handleStartParam = useCallback(async () => {
     await initialize();
     if (!isTMA()) {
       return;
@@ -184,20 +190,21 @@ export default function RootLayout() {
       } else {
         // Show alert if song not found
         Alert.alert(
-          "Song Not Found",
-          "Sorry, we couldn't find the requested song.",
+          "Песня не найдена",
+          "Извините, мы не смогли найти запрошенную песню.",
           [{ text: "OK" }]
         );
       }
     } else {
       console.warn("dont know how to handle this start param");
     }
-  };
+  }, [router]);
+
+  const [awaitStartParam, isAwaitingStartParam] = useAwaiting(handleStartParam);
 
   useEffect(() => {
-    handleStartParam();
+    awaitStartParam();
   }, []);
-
 
   if (!loaded) {
     return null;
@@ -219,6 +226,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
+      {isAwaitingStartParam && <LoadingOverlay />}
     </ThemeProvider>
   );
 }
