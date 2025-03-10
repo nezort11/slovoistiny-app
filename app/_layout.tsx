@@ -16,8 +16,6 @@ import {
 import {
   init,
   backButton,
-  useSignal,
-  initDataStartParam,
 } from "@telegram-apps/sdk-react";
 import { openTelegramLink, requestWriteAccess } from "@telegram-apps/sdk";
 import axios from "axios";
@@ -102,8 +100,10 @@ const initialize = async () => {
   await import("../utils/eruda");
   // }
 
-  const isTma = await isTMA();
+  const isTma = isTMA();
+  console.log("isTma", isTma);
   if (isTma) {
+    console.log("calling react sdk init");
     init();
 
     const launchParams = retrieveLaunchParams();
@@ -141,8 +141,9 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
-  const startParam = useSignal(initDataStartParam);
-  console.log("startParam", startParam);
+  // const launchParams = useLau();
+  // const startParam = useSignal(initDataStartParam);
+  // console.log("startParam", startParam);
 
   useEffect(() => {
     if (loaded) {
@@ -150,39 +151,45 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  useEffect(() => {
-    if (startParam) {
-      (async () => {
-        if (startParam?.startsWith("song")) {
-          const songId = parseInt(startParam.split(START_APP_PARAM_DELIMITER)[1]);
-          // Get song page by id
-          const songEntry = await getSongEntry(songId);
-          console.log("songEntry", songEntry);
-          
-          // Search for the song by name to get full details
-          const searchResults = await searchSongs(songEntry.name);
-          const song = searchResults.musics.data.find((m: Music) => m.id === songEntry.id);
-          if (song) {
-            router.push({
-              pathname: "/song-modal", 
-              params: {
-                searchResultMusic: JSON.stringify(song)
-              }
-            });
-          } else {
-            // Show alert if song not found
-            Alert.alert(
-              "Song Not Found",
-              "Sorry, we couldn't find the requested song.",
-              [{ text: "OK" }]
-            );
-          }
-        } else {
-          console.warn("dont know how to handle this start param");
-        }
-      })();
+  const handleStartParam = async () => {
+    const launchParams = retrieveLaunchParams();
+    const startParam = launchParams?.tgWebAppStartParam;
+    if (!startParam) {
+      return;
     }
-  }, [startParam]);
+
+    if (startParam.startsWith("song")) {
+      const songId = parseInt(startParam.split(START_APP_PARAM_DELIMITER)[1]);
+      // Get song page by id
+      const songEntry = await getSongEntry(songId);
+      console.log("songEntry", songEntry);
+
+      // Search for the song by name to get full details
+      const searchResults = await searchSongs(songEntry.name);
+      const song = searchResults.musics.data.find((m: Music) => m.id === songEntry.id);
+      if (song) {
+        router.push({
+          pathname: "/song-modal",
+          params: {
+            searchResultMusic: JSON.stringify(song)
+          }
+        });
+      } else {
+        // Show alert if song not found
+        Alert.alert(
+          "Song Not Found",
+          "Sorry, we couldn't find the requested song.",
+          [{ text: "OK" }]
+        );
+      }
+    } else {
+      console.warn("dont know how to handle this start param");
+    }
+  };
+
+  useEffect(() => {
+    handleStartParam();
+  }, []);
 
 
   if (!loaded) {
