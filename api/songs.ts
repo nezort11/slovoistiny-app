@@ -73,16 +73,16 @@ export const searchSongs = async (query: string) => {
 };
 
 export const getSongEntry = async (songId: number) => {
-  try {
-    const songEntryResponse = await axios.post<MusicEntry>(`/moderation/${songId}/entry`, {
-      baseURL: HOLYCHORDS_BASE_URL,
-      headers: {
-        "x-requested-with": "XMLHttpRequest"
-      }
-    });
-    return songEntryResponse.data;
-  } catch (error) {
-    console.error("error getting song entry", error);
-    throw error;
-  }
+  // try {
+  const songEntryResponse = await axios.post<MusicEntry>(`/moderation/${songId}/entry`, null, {
+    baseURL: HOLYCHORDS_BASE_URL,
+    headers: {
+      "x-requested-with": "XMLHttpRequest"
+    }
+  });
+  return songEntryResponse.data;
+  // } catch (error) {
+  //   console.error("error getting song entry", error);
+  //   throw error;
+  // }
 };
