@@ -30,6 +30,11 @@ export type Music = {
     youtube: string; // song youtube video id
 };
 
+export type MusicEntry  = {
+    name: string; // song title
+    text: string; // song lyrics with accords
+}
+
 export type SearchResults = {
     musics: {
         data: Music[];
@@ -67,8 +72,8 @@ export const searchSongs = async (query: string) => {
     return songResultsResponse.data;
 };
 
-export const getSongEntry = async (songId: number): Promise<Music> => {
-  const songEntryResponse = await axios.get<Music>(`/moderation/${songId}/entry`, {
+export const getSongEntry = async (songId: number) => {
+  const songEntryResponse = await axios.post<MusicEntry>(`/moderation/${songId}/entry`, {
     baseURL: HOLYCHORDS_BASE_URL,
     headers: {
       "x-requested-with": "XMLHttpRequest"

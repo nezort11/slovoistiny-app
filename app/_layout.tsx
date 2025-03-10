@@ -173,7 +173,7 @@ export default function RootLayout() {
 
       // Search for the song by name to get full details
       const searchResults = await searchSongs(songEntry.name);
-      const song = searchResults.musics.data.find((m: Music) => m.id === songEntry.id);
+      const song = searchResults.musics.data.find((music: Music) => music.id === songId);
       if (song) {
         router.push({
           pathname: "/song-modal",
