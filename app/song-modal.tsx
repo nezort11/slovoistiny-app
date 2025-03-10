@@ -29,7 +29,7 @@ export default function SongModal() {
     const songUrl = buildSongLink(searchResultMusic.id);
     const shareText = `${searchResultMusic.name} - ${searchResultMusic.artist.isp_name}`;
     const shareUrl = buildTelegramShareLink(songUrl, shareText);
-    
+
     if (openTelegramLink.isAvailable()) {
       openTelegramLink(shareUrl);
     } else {
