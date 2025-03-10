@@ -39,7 +39,7 @@ export type SearchResults = {
 
 const HTTP_PROXY_URL = process.env.EXPO_PUBLIC_HTTP_PROXY_URL;
 
-const HOLYCHORDS_API_URL_CORS = "https://holychords.pro/search";
+const HOLYCHORDS_BASE_URL_CORS = "https://holychords.pro/";
 
 const proxifyUrl = (url: string) => {
     const proxiedUrl = new URL(HTTP_PROXY_URL);
@@ -48,15 +48,16 @@ const proxifyUrl = (url: string) => {
 };
 
 // Proxy holychords requests in browser to bypass CORS
-const HOLYCHORDS_API_URL =
+const HOLYCHORDS_BASE_URL =
     Platform.OS === "web"
-        ? proxifyUrl(HOLYCHORDS_API_URL_CORS)
-        : HOLYCHORDS_API_URL_CORS;
+        ? proxifyUrl(HOLYCHORDS_BASE_URL_CORS)
+        : HOLYCHORDS_BASE_URL_CORS;
 
 export const searchSongs = async (query: string) => {
     const songResultsResponse = await axios.get<SearchResults>(
-        HOLYCHORDS_API_URL,
+        '/search',
         {
+            baseURL: HOLYCHORDS_BASE_URL,
             headers: {
                 "x-requested-with": "XMLHttpRequest",
             },
@@ -67,7 +68,8 @@ export const searchSongs = async (query: string) => {
 };
 
 export const getSongEntry = async (songId: number): Promise<Music> => {
-  const songEntryResponse = await axios.get<Music>(`https://holychords.pro/moderation/${songId}/entry`, {
+  const songEntryResponse = await axios.get<Music>(`/moderation/${songId}/entry`, {
+    baseURL: HOLYCHORDS_BASE_URL,
     headers: {
       "x-requested-with": "XMLHttpRequest"
     }

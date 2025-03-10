@@ -153,6 +153,9 @@ export default function RootLayout() {
 
   const handleStartParam = async () => {
     await initialize();
+    if (!isTMA()) {
+      return;
+    }
 
     console.log("retrieving launch params...");
     const launchParams = retrieveLaunchParams();
