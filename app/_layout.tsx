@@ -152,6 +152,8 @@ export default function RootLayout() {
   }, [loaded]);
 
   const handleStartParam = async () => {
+    await initialize();
+
     console.log("retrieving launch params...");
     const launchParams = retrieveLaunchParams();
     const startParam = launchParams?.tgWebAppStartParam;
