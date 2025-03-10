@@ -8,9 +8,10 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { Music } from "@/api/songs";
-import { useLayoutEffect, useMemo } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import { Feather } from '@expo/vector-icons';
 import { buildTelegramShareLink, buildSongLink } from "@/utils/telegram";
+import { COLORS } from "@/constants/theme";
 
 type SongModalParams = {
   searchResultMusic: string;
@@ -24,6 +25,8 @@ export default function SongModal() {
     [params.searchResultMusic]
   );
   console.log("route params", searchResultMusic);
+
+  const [isShareButtonHovered, setIsShareButtonHovered] = useState(false);
 
   const handleShareSong = () => {
     const songUrl = buildSongLink(searchResultMusic.id);
@@ -53,21 +56,23 @@ export default function SongModal() {
         </Text>
       </View>
 
-      <View style={{ position: 'absolute', left: 16, top: 16 }}>
-        <Pressable onPress={handleShareSong}>
+      <View style={styles.shareButtonContainer}>
+        <Pressable
+          onPress={handleShareSong}
+          onHoverIn={() => setIsShareButtonHovered(true)}
+          onHoverOut={() => setIsShareButtonHovered(false)}
+          style={({ pressed }) => [
+            styles.shareButton,
+            isShareButtonHovered && { backgroundColor: COLORS.primary + '20' },
+            pressed && styles.shareButtonPressed,
+          ]}
+        >
           <Feather name="share-2" size={24} color="black" />
         </Pressable>
       </View>
 
       <Text
-        style={{
-          fontSize: 18,
-          fontWeight: 500,
-          fontVariant: ["tabular-nums"],
-          // Song lyrics are displayed correctly only in non-monospace font family
-          // fontFamily: "sans-serif",
-          // fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace",
-        }}
+        style={styles.lyricsText}
       >
         {searchResultMusic.text}
       </Text>
@@ -83,5 +88,27 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  shareButtonContainer: {
+    position: 'absolute',
+    right: 16,
+    top: 16,
+  },
+  shareButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+  },
+  shareButtonPressed: {
+    backgroundColor: COLORS.primary + '40',
+  },
+  lyricsText: {
+    fontSize: 18,
+    fontWeight: '500',
+    fontVariant: ["tabular-nums"],
+    // Song lyrics are displayed correctly only in non-monospace font family
+    // fontFamily: "sans-serif",
+    // fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace",
   },
 });
