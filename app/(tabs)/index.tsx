@@ -20,10 +20,15 @@ import axios from "axios";
 import { useIsAwaiting } from "@/hooks/useIsAwaiting";
 import { Link, useNavigation, useRouter } from "expo-router";
 import { Container } from "@/components/Container";
-import { searchSongs, Music, SearchResults, MusicLanguage, getHolychordsImageThumbnail } from "@/api/songs";
+import {
+  searchSongs,
+  Music,
+  SearchResults,
+  MusicLanguage,
+  getHolychordsImageThumbnail,
+  getSongFirstLine,
+} from "@/api/songs";
 import { COLORS } from "@/constants/theme";
-
-
 
 export default function HomeScreen() {
   // const navigation = useNavigation();
@@ -85,52 +90,64 @@ export default function HomeScreen() {
                   (searchResultMusic) =>
                     searchResultMusic.id_lang === MusicLanguage.Russian
                 )
-                .map((searchResultMusic) => (
-                  <Pressable
-                    key={searchResultMusic.id}
-                    onPress={() =>
-                      router.push({
-                        pathname: "/song-modal",
-                        params: {
-                          searchResultMusic:
-                            JSON.stringify(searchResultMusic),
-                        },
-                      })
-                    }
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 16,
-                    }}
-                  >
-                    <Image
-                      width={40}
-                      height={40}
-                      source={{
-                        uri: searchResultMusic.artist.img_url
-                          ? getHolychordsImageThumbnail(
-                            searchResultMusic.artist.img_url
-                          )
-                          : "https://holychords.pro/assets/img/no-cover.jpeg",
-                      }}
-                      style={{ borderRadius: 8, width: 40, height: 40 }}
-                    />
-                    <View
-                      style={
-                        {
-                          // display: "flex",
-                          // flexDirection: "column",
-                          // flexWrap: "wrap",
-                          // flex: 1,
-                        }
+                .map((searchResultMusic) => {
+                  const songFirstLine = getSongFirstLine(
+                    searchResultMusic.text
+                  )?.trim();
+                  return (
+                    <Pressable
+                      key={searchResultMusic.id}
+                      onPress={() =>
+                        router.push({
+                          pathname: "/song-modal",
+                          params: {
+                            searchResultMusic:
+                              JSON.stringify(searchResultMusic),
+                          },
+                        })
                       }
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 16,
+                      }}
                     >
-                      <Text>{searchResultMusic.name}</Text>
-                      <Text>{searchResultMusic.artist.isp_name}</Text>
-                    </View>
-                  </Pressable>
-                ))}
+                      <Image
+                        width={40}
+                        height={40}
+                        source={{
+                          uri: searchResultMusic.artist.img_url
+                            ? getHolychordsImageThumbnail(
+                                searchResultMusic.artist.img_url
+                              )
+                            : "https://holychords.pro/assets/img/no-cover.jpeg",
+                        }}
+                        style={{ borderRadius: 8, width: 40, height: 40 }}
+                      />
+                      <View
+                        style={
+                          {
+                            // display: "flex",
+                            // flexDirection: "column",
+                            // flexWrap: "wrap",
+                            // flex: 1,
+                          }
+                        }
+                      >
+                        <Text style={{ fontWeight: 600 }}>
+                          {searchResultMusic.name} (
+                          {searchResultMusic.lyric_author ||
+                            searchResultMusic.music_author ||
+                            searchResultMusic.artist.isp_name}
+                          )
+                        </Text>
+                        {songFirstLine && <Text>«{songFirstLine}»</Text>}
+                        <Text></Text>
+                      </View>
+                    </Pressable>
+                  );
+                })}
           </View>
         </ScrollView>
       </Container>

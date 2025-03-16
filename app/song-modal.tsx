@@ -7,9 +7,14 @@ import {
   Pressable,
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { Music } from "@/api/songs";
+import {
+  Music,
+  getSongCouplets,
+  isSongChordLine,
+  isSongCoupletLine,
+} from "@/api/songs";
 import { useLayoutEffect, useMemo, useState } from "react";
-import { Feather } from '@expo/vector-icons';
+import { Feather } from "@expo/vector-icons";
 import { buildTelegramShareLink, buildSongLink } from "@/utils/telegram";
 import { COLORS } from "@/constants/theme";
 
@@ -28,15 +33,26 @@ export default function SongModal() {
 
   const [isShareButtonHovered, setIsShareButtonHovered] = useState(false);
 
+  const lines = useMemo(() => searchResultMusic.text.split("\n"), []);
+
+  const couplets = useMemo(
+    () => getSongCouplets(searchResultMusic.text),
+    []
+  );
+
   const handleShareSong = () => {
     const songUrl = buildSongLink(searchResultMusic.id);
-    const shareText = `${searchResultMusic.name} - ${searchResultMusic.artist.isp_name}`;
+    const shareText = `${searchResultMusic.name} - ${
+      searchResultMusic.lyric_author ||
+      searchResultMusic.music_author ||
+      searchResultMusic.artist.isp_name
+    }`;
     const shareUrl = buildTelegramShareLink(songUrl, shareText);
 
     if (openTelegramLink.isAvailable()) {
       openTelegramLink(shareUrl);
     } else {
-      window.open(shareUrl, '_blank');
+      window.open(shareUrl, "_blank");
     }
   };
 
@@ -45,7 +61,10 @@ export default function SongModal() {
   }, []);
 
   return (
-    <ScrollView contentContainerStyle={[{ padding: 16 }]}>
+    <ScrollView
+      style={{ backgroundColor: "white" }}
+      contentContainerStyle={[{ padding: 16 }]}
+    >
       {/* <View style={styles.container}> */}
       <View style={{ marginBottom: 24, alignItems: "center" }}>
         <Text style={{ fontSize: 24, fontWeight: 600 }}>
@@ -63,7 +82,9 @@ export default function SongModal() {
           onHoverOut={() => setIsShareButtonHovered(false)}
           style={({ pressed }) => [
             styles.shareButton,
-            isShareButtonHovered && { backgroundColor: COLORS.primary + '20' },
+            isShareButtonHovered && {
+              backgroundColor: COLORS.primary + "20",
+            },
             pressed && styles.shareButtonPressed,
           ]}
         >
@@ -71,11 +92,37 @@ export default function SongModal() {
         </Pressable>
       </View>
 
-      <Text
-        style={styles.lyricsText}
-      >
-        {searchResultMusic.text}
-      </Text>
+      <View style={styles.lyricsContainer}>
+        {couplets.map((coupletLyrics, coupletIndex) => {
+          const lines = coupletLyrics.split("\n");
+
+          return (
+            <View key={coupletIndex} style={styles.coupletContainer}>
+              {lines.map((line, lineIndex) => {
+                const isCoupletLine = isSongCoupletLine(
+                  line,
+                  lines[lineIndex - 1]
+                );
+                const isChordLine = isSongChordLine(line);
+
+                return (
+                  <Text
+                    key={lineIndex}
+                    style={[
+                      styles.lyricsText,
+                      ...(isChordLine && !isCoupletLine
+                        ? [styles.lyricsChordText]
+                        : []),
+                    ]}
+                  >
+                    {line}
+                  </Text>
+                );
+              })}
+            </View>
+          );
+        })}
+      </View>
     </ScrollView>
   );
 }
@@ -90,23 +137,38 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   shareButtonContainer: {
-    position: 'absolute',
+    position: "absolute",
     right: 16,
     top: 16,
   },
   shareButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: 'transparent',
-    cursor: 'pointer',
+    backgroundColor: "transparent",
+    cursor: "pointer",
   },
   shareButtonPressed: {
-    backgroundColor: COLORS.primary + '40',
+    backgroundColor: COLORS.primary + "40",
+  },
+  lyricsContainer: {
+    gap: 8,
+  },
+  coupletContainer: {
+    padding: 8,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderRadius: 16,
   },
   lyricsText: {
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: "500",
     fontVariant: ["tabular-nums"],
+    // Song lyrics are displayed correctly only in non-monospace font family
+    // fontFamily: "sans-serif",
+    // fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace",
+  },
+  lyricsChordText: {
+    color: COLORS.primary,
     // Song lyrics are displayed correctly only in non-monospace font family
     // fontFamily: "sans-serif",
     // fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace",
