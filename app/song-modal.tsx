@@ -31,6 +31,7 @@ export default function SongModal() {
   );
   console.log("route params", searchResultMusic);
 
+  const [isCopyButtonHovered, setIsCopyButtonHovered] = useState(false);
   const [isShareButtonHovered, setIsShareButtonHovered] = useState(false);
 
   const lines = useMemo(() => searchResultMusic.text.split("\n"), []);
@@ -39,6 +40,16 @@ export default function SongModal() {
     () => getSongCouplets(searchResultMusic.text),
     []
   );
+
+  const handleCopySong = async () => {
+    const songUrl = buildSongLink(searchResultMusic.id);
+    const songText = `${searchResultMusic.name} - ${
+      searchResultMusic.lyric_author ||
+      searchResultMusic.music_author ||
+      searchResultMusic.artist.isp_name
+    }\n\n${searchResultMusic.text}\n\n${songUrl}`;
+    await navigator.clipboard.writeText(songText);
+  };
 
   const handleShareSong = () => {
     const songUrl = buildSongLink(searchResultMusic.id);
@@ -66,7 +77,7 @@ export default function SongModal() {
       contentContainerStyle={[{ padding: 16 }]}
     >
       {/* <View style={styles.container}> */}
-      <View style={{ marginBottom: 24, alignItems: "center" }}>
+      <View style={styles.titleContainer}>
         <Text style={{ fontSize: 24, fontWeight: 600 }}>
           {searchResultMusic.name}
         </Text>
@@ -77,6 +88,20 @@ export default function SongModal() {
 
       <View style={styles.shareButtonContainer}>
         <Pressable
+          onPress={handleCopySong}
+          onHoverIn={() => setIsCopyButtonHovered(true)}
+          onHoverOut={() => setIsCopyButtonHovered(false)}
+          style={({ pressed }) => [
+            styles.shareButton,
+            isCopyButtonHovered && {
+              backgroundColor: COLORS.primary + "20",
+            },
+            pressed && styles.buttonPressed,
+          ]}
+        >
+          <Feather name="copy" size={24} color="black" />
+        </Pressable>
+        <Pressable
           onPress={handleShareSong}
           onHoverIn={() => setIsShareButtonHovered(true)}
           onHoverOut={() => setIsShareButtonHovered(false)}
@@ -85,7 +110,7 @@ export default function SongModal() {
             isShareButtonHovered && {
               backgroundColor: COLORS.primary + "20",
             },
-            pressed && styles.shareButtonPressed,
+            pressed && styles.buttonPressed,
           ]}
         >
           <Feather name="share-2" size={24} color="black" />
@@ -136,10 +161,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  titleContainer: {
+    alignItems: "center",
+    marginBottom: 8,
+  },
   shareButtonContainer: {
-    position: "absolute",
-    right: 16,
-    top: 16,
+    display: "flex",
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
+    marginBottom: 16,
   },
   shareButton: {
     padding: 8,
@@ -147,7 +178,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     cursor: "pointer",
   },
-  shareButtonPressed: {
+  buttonPressed: {
     backgroundColor: COLORS.primary + "40",
   },
   lyricsContainer: {
