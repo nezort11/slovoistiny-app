@@ -88,6 +88,7 @@ export default function SongModal() {
 
       <View style={styles.shareButtonContainer}>
         <Pressable
+          testID="song-copy-button"
           onPress={handleCopySong}
           onHoverIn={() => setIsCopyButtonHovered(true)}
           onHoverOut={() => setIsCopyButtonHovered(false)}

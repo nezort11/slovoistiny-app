@@ -69,12 +69,16 @@ export default function HomeScreen() {
         </ThemedView>
         <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
           <TextInput
+            testID="search-input"
+            // data-testid="search-input"
             placeholder="Введите запрос для поиска"
             onChangeText={setSongSearchQuery}
             readOnly={isSearching}
             style={{ borderWidth: 1, minWidth: 200 }}
           />
           <Button
+            testID="search-button"
+            // data-testid="search-button"
             title="Поиск"
             onPress={handleSearch}
             disabled={!songSearchQuery || isSearching}
@@ -82,7 +86,14 @@ export default function HomeScreen() {
           />
         </View>
         <ScrollView>
-          {isSearching && <Text>Загрузка...</Text>}
+          {isSearching && (
+            <Text
+              testID="loading-indicator"
+              // data-testid="loading-indicator"
+            >
+              Загрузка...
+            </Text>
+          )}
           <View style={{ gap: 8 }}>
             {searchResults &&
               searchResults.musics.data
@@ -96,6 +107,8 @@ export default function HomeScreen() {
                   )?.trim();
                   return (
                     <Pressable
+                      testID="search-result"
+                      // data-testid="search-result"
                       key={searchResultMusic.id}
                       onPress={() =>
                         router.push({
