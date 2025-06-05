@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("main flow works", async ({ browser }) => {
+test("main flow should be functional", async ({ browser }) => {
   const context = await browser.newContext({
     permissions: ["clipboard-read", "clipboard-write"],
   });
