@@ -1,8 +1,10 @@
 import { ScrollViewStyleReset } from "expo-router/html";
 import { type PropsWithChildren } from "react";
+import { inject } from "@vercel/analytics";
 import { injectSpeedInsights } from "@vercel/speed-insights";
 import "../utils/eruda";
 
+inject();
 injectSpeedInsights();
 
 /**
